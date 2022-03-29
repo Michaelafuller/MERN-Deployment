@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from "react";
+import {useHistory} from 'react-router-dom';
 
 const Dashboard = () => {
+    const history = useHistory();
+
+    const startStand = () => {
+        history.push("/session");
+    };
 
     return (
         <div>
@@ -14,7 +19,7 @@ const Dashboard = () => {
             </div>
             <div className="middleRow" style={{ display:"flex"}}>
                 <div className="leftCol">
-                    <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>Open Stand</b></button>
+                    <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>startStand()}><b>Open Stand</b></button>
                     <button className="btn btn-primary" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>Add Supplies</b></button>
                 </div>
                 <div className="middleCol">
