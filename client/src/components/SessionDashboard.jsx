@@ -1,4 +1,12 @@
+import { useHistory } from "react-router-dom"
+
 const SessionDashboard = () => {
+    const history = useHistory();
+
+    const goToTransaction = () => {
+        history.push("/transaction-page");
+    };
+    
     return (
         <div>
         <div style={{display:"flex", border:"2px solid black", padding:"25px", margin:"25px"}}>
@@ -50,7 +58,7 @@ const SessionDashboard = () => {
             </div>
         </div>
         <div style={{display:"flex", justifyContent:"space-between"}}>
-            <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>New Transaction</b></button>
+            <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToTransaction()}><b>New Transaction</b></button>
             <button className="btn btn-danger" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>Close Up Shop</b></button>
         </div>
     </div>
