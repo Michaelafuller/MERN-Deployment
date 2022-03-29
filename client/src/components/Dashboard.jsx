@@ -7,6 +7,10 @@ const Dashboard = () => {
         history.push("/session");
     };
 
+    const addSupply = () => {
+        history.push("/add-supply");
+    };
+
     return (
         <div>
             <div className="topRow" style={{ display:"flex", alignItems:"center"}}>
@@ -20,7 +24,7 @@ const Dashboard = () => {
             <div className="middleRow" style={{ display:"flex"}}>
                 <div className="leftCol">
                     <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>startStand()}><b>Open Stand</b></button>
-                    <button className="btn btn-primary" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>Add Supplies</b></button>
+                    <button className="btn btn-primary" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>addSupply()}><b>Add Supplies</b></button>
                 </div>
                 <div className="middleCol">
                     <div className="standState" style={{border:"solid black 2px", padding:"30px", margin:"25px"}}>
