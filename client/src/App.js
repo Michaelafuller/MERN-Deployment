@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard';
 import SessionDashboard from './components/SessionDashboard';
 import TransactionPage from './components/TransactionPage';
 import InvoicePage from './components/InvoicePage';
+import Receipt from './components/Receipt';
 import {Switch, Route} from 'react-router-dom';
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
         </Route>
         <Route exact path={"/invoice-page"}>
           <InvoicePage />
+        </Route>
+        <Route exact path={"/receipt"}>
+          <Receipt />
         </Route>
       </Switch>
     </div>

@@ -1,8 +1,15 @@
+import {useHistory} from 'react-router-dom';
+
 const InvoicePage = () => {
+    const history = useHistory();
+    
+    const toReceipt = () => {
+        history.push("/receipt")
+    }
 
     return (
         <div>
-            <form className="form" style={{margin:"25px", padding:"15px", border:"solid black 2px"}}>
+            <form className="form" style={{margin:"25px", padding:"15px", border:"solid black 2px"}} onSubmit={()=>toReceipt()}>
                 <h2>Invoice</h2>
                 <p>3 Lemonades @ $4/each</p>
                 <hr />
