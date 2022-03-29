@@ -5,6 +5,8 @@ import SessionDashboard from './components/SessionDashboard';
 import TransactionPage from './components/TransactionPage';
 import InvoicePage from './components/InvoicePage';
 import Receipt from './components/Receipt';
+import CloseoutPage from './components/CloseoutPage';
+import NewSupply from './components/NewSupply.jsx'
 import {Switch, Route} from 'react-router-dom';
 
 function App() {
@@ -25,6 +27,12 @@ function App() {
         </Route>
         <Route exact path={"/receipt"}>
           <Receipt />
+        </Route>
+        <Route exact path={"/closeout"}>
+          <CloseoutPage />
+        </Route>
+        <Route exact path={"/add-supply"}>
+          <NewSupply />
         </Route>
       </Switch>
     </div>

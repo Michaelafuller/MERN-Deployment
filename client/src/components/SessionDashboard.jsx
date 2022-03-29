@@ -6,6 +6,10 @@ const SessionDashboard = () => {
     const goToTransaction = () => {
         history.push("/transaction-page");
     };
+
+    const goToCloseout = () => {
+        history.push("/closeout");
+    }
     
     return (
         <div>
@@ -59,7 +63,7 @@ const SessionDashboard = () => {
         </div>
         <div style={{display:"flex", justifyContent:"space-between"}}>
             <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToTransaction()}><b>New Transaction</b></button>
-            <button className="btn btn-danger" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}}><b>Close Up Shop</b></button>
+            <button className="btn btn-danger" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToCloseout()}><b>Close Up Shop</b></button>
         </div>
     </div>
     )
