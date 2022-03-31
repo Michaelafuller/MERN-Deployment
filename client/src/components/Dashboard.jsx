@@ -1,15 +1,28 @@
 import {useHistory} from 'react-router-dom';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import Moment from 'react-moment';
 
 const Dashboard = () => {
     const history = useHistory();
+    const [stands, setStands] = useState([]);
+    const [currentSession, setCurrentSession] = useState("");
 
     const startStand = () => {
-        history.push("/session");
+        axios.post('http://localhost:8000/api/stands')
+        .then((res)=> history.push(`/session/${res.data._id}`))
+        .catch((err)=>console.log(err))  
     };
 
     const addSupply = () => {
         history.push("/add-supply");
     };
+
+    useEffect(() => {
+        axios.get(`http://localhost:8000/api/stands/`)
+        .then((res) => {setStands(res.data)})
+        .catch((err) => console.log(err))
+    })
 
     return (
         <div>
@@ -50,28 +63,24 @@ const Dashboard = () => {
                 </div>
                 <div className="rightCol">
                 <div className="tableHolder" style={{marginTop:"25px", border:"solid black 2px", padding:"25px"}}>
-                <h2>Past Stands</h2>
-            <table className="table">
-                    <thead>
-                        <th>Date</th>
-                        <th>Total Sales</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>3/1/2022</td>
-                            <td>$54</td>
-                        </tr>
-                        <tr>
-                            <td>3/2/2022</td>
-                            <td>$37</td>
-                        </tr>
-                        <tr>
-                            <td>3/10/2022</td>
-                            <td>$60</td>
-                        </tr>
-                </tbody>
-                </table>
-                </div>
+                    <h2>Past Stands</h2>
+                    <table className="table">
+                            <thead>
+                                <th>Date</th>
+                                <th>Total Sales</th>
+                            </thead>
+                            <tbody>
+                                {stands.map((stand, idx) => {
+                                    return (
+                                        <tr key={idx}>
+                                            <td><Moment format="MM/DD/YYYY">{stand.createdAt}</Moment ></td>
+                                            <td>${stand.total_sales}</td>
+                                        </tr>
+                                    )
+                                })}
+                        </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
