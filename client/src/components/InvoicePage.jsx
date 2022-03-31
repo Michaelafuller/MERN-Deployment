@@ -12,9 +12,9 @@ const InvoicePage = () => {
     useEffect(() => {
         axios.get(`http://localhost:8000/api/stands/${standId}`)
         .then((res)=>{
-            console.log(res.data, stand, "im tired");
             setStand(res.data);
-            console.log(stand, 'im tired 2')
+            console.log(res.data, stand, "axios response for the stand");
+            console.log(stand, 'stand after setting stand to axios response')
         })
         .catch((err)=>console.log(err))
         
@@ -24,6 +24,8 @@ const InvoicePage = () => {
             setTransaction(res.data)
         })
         .catch((err)=>console.log(err))
+
+        console.log(transaction, "this is the transaction");
 
     }, []) 
     
@@ -37,10 +39,13 @@ const InvoicePage = () => {
         }
 
         axios.put(`http://localhost:8000/api/transactions/${transactionId}`, updatedTransaction)
-        .then((res)=>console.log(res))
+        .then((res)=> {
+            console.log(res.data)
+            setTransaction(updatedTransaction)
+            })
         .catch((err)=>console.log(err))
 
-        console.log(stand, 'IM THE STAND');
+        console.log(stand, 'before axios put request to update stand');
 
         const updatedStand = {
             ...stand,
@@ -48,6 +53,8 @@ const InvoicePage = () => {
             total_cups: stand.total_cups + transaction.lemonades,
             total_tips: stand.total_tips + transaction.tip
         }
+
+        console.log(stand, 'after put request updating stand')
 
         axios.put(`http://localhost:8000/api/stands/${standId}`, updatedStand)
         .then((res)=>console.log(res))
