@@ -40,7 +40,7 @@ const SessionDashboard = () => {
             setStands(res.data); 
             setIsDeleted(false)})
         .catch((err)=>console.log(err))
-    }, [isDeleted])
+    }, [isDeleted, standId])
 
     const handleDelete = (deleteStandId) => {
         axios.delete('http://localhost:8000/api/stands/'+deleteStandId)
