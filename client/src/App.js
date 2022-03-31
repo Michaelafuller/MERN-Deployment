@@ -16,7 +16,7 @@ function App() {
         <Route exact path={"/"}>
           <Dashboard />
         </Route>
-        <Route exact path={"/session"}>
+        <Route exact path={"/session/:standId"}>
           <SessionDashboard />
         </Route>
         <Route exact path={"/transaction-page"}>
@@ -28,7 +28,7 @@ function App() {
         <Route exact path={"/receipt"}>
           <Receipt />
         </Route>
-        <Route exact path={"/closeout"}>
+        <Route exact path={"/closeout/:id"}>
           <CloseoutPage />
         </Route>
         <Route exact path={"/add-supply"}>

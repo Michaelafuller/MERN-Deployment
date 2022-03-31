@@ -1,14 +1,54 @@
-import { useHistory } from "react-router-dom"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom"
 
 const SessionDashboard = () => {
     const history = useHistory();
+    const { standId } = useParams();
+    const [currentStand, setCurrentStand] = useState({});
+    const [stands, setStands] = useState([]);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     const goToTransaction = () => {
-        history.push("/transaction-page");
+        axios.post('http://localhost:8000/api/transactions')
+        .then((res)=> history.push(`/transaction-page/${standId}/${res.data._id}`))
+        .catch((err)=>console.log(err))
     };
 
     const goToCloseout = () => {
-        history.push("/closeout");
+        
+        const updatedStand = {
+            ...currentStand,
+            is_open: false
+        }
+        
+        axios.put(`http://localhost:8000/api/stands/${standId}`, updatedStand)
+        .then((res)=> {
+            console.log(res);
+            setCurrentStand(updatedStand)})
+        .catch((err)=>console.log(err))
+        history.push(`/closeout/${standId}`);
+    }
+
+    useEffect(() => {
+        axios.get(`http://localhost:8000/api/stands/${standId}`)
+        .then((res)=>setCurrentStand(res.data))
+        .catch((err)=>console.log(err))
+
+        axios.get('http://localhost:8000/api/stands')
+        .then((res) => { 
+            setStands(res.data); 
+            setIsDeleted(false)})
+        .catch((err)=>console.log(err))
+    }, [isDeleted])
+
+    const handleDelete = (deleteStandId) => {
+        axios.delete('http://localhost:8000/api/stands/'+deleteStandId)
+        .then((res)=>{
+            setIsDeleted(true)
+            setStands(stands.filter(stand => stand._id===deleteStandId))
+        })
+        .catch((err)=>console.log(err))
     }
     
     return (
@@ -16,12 +56,12 @@ const SessionDashboard = () => {
         <div style={{display:"flex", border:"2px solid black", padding:"25px", margin:"25px"}}>
             <div className="rightCol">
                 <h2 style={{textAlign:"left"}}>Today's Totals</h2>
-                <p style={{textAlign:"left"}}>Cups sold: 50</p>
-                <p style={{textAlign:"left"}}>Total Recipts: $50</p>
-                <p style={{textAlign:"left"}}>Tips: $12</p>
-                <p style={{textAlign:"left"}}>Costs Incurred: $12</p>
+                <p style={{textAlign:"left"}}>Cups sold: {currentStand.total_cups}</p>
+                <p style={{textAlign:"left"}}>Total Recipts: ${currentStand.total_sales}</p>
+                <p style={{textAlign:"left"}}>Tips: ${currentStand.total_tips}</p>
+                <p style={{textAlign:"left"}}>Costs Incurred: ${currentStand.total_costs_incurred}</p>
                 <hr />
-                <p style={{textAlign:"left"}}>Profit (not including tips): $26</p>
+                <p style={{textAlign:"left"}}>Profit (not including tips): ${currentStand.total_sales - currentStand.total_tips - currentStand.total_costs_incurred}</p>
             </div>
             <div className="middleCol">
                 <h2 style={{textAlign:"left"}}>Supplies on Hand</h2>
@@ -64,6 +104,16 @@ const SessionDashboard = () => {
         <div style={{display:"flex", justifyContent:"space-between"}}>
             <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToTransaction()}><b>New Transaction</b></button>
             <button className="btn btn-danger" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToCloseout()}><b>Close Up Shop</b></button>
+        </div>
+        <div>
+            {stands.map((stand, idx) => {
+                return (
+                    <div key={idx}>
+                        <p>{stand.is_open ? "open" : "closed"}</p>
+                        <button className="btn btn-danger" onClick={()=>handleDelete(stand._id)}>Delete</button>
+                    </div>
+                )
+            })}
         </div>
     </div>
     )
