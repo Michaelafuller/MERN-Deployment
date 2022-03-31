@@ -3,16 +3,20 @@ const mongoose = require('mongoose');
 const IngredientSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Quantity was not selected"]
+        required: [true, "Ingredient was not selected."]
     },
     price: {
         type: Number,
-        required: [true, "Price was not provided"]
+        required: [true, "Price was not provided."]
     },
-    // items * item portion needed for one lemonade
     quantity: {
         type: Number,
-        default: 0
+        required: [true, 'Quantity must be greater than zero.']
+    },
+    
+    // items * item portion needed for one lemonade
+    servings: {
+        type: Number
     }
 })
 

@@ -7,6 +7,7 @@ const DB = "lemonade_DB";
 app.use(cors(), express.json(), express.urlencoded({ extended: true }));
 require('./routes/Stand.routes')(app);
 require('./routes/Transaction.routes')(app);
+require('./routes/Ingredient.routes')(app)
 require('./config/mongoose.config')(DB);
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));
