@@ -10,8 +10,11 @@ const SessionDashboard = () => {
     const [isDeleted, setIsDeleted] = useState(false);
 
     const goToTransaction = () => {
-        axios.post('http://localhost:8000/api/transactions')
-        .then((res)=> history.push(`/transaction-page/${standId}/${res.data._id}`))
+        axios.post('http://localhost:8000/api/transactions/')
+        .then((res)=> {
+            let transaction = res.data;
+            history.push(`/transaction-page/${standId}/${transaction._id}`);
+        })
         .catch((err)=>console.log(err))
     };
 
