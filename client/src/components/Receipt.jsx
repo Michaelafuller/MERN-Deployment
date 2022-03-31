@@ -1,10 +1,11 @@
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 
 const Receipt = () => {
     const history = useHistory();
+    const {standId, transactionId} = useParams();
 
     const backToSessionDashboard = () => {
-        history.push("/session")
+        history.push(`/session/${standId}`);
     };
 
     return (
