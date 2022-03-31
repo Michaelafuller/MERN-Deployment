@@ -18,13 +18,13 @@ function App() {
         <Route exact path={"/session/:standId"}>
           <SessionDashboard />
         </Route>
-        <Route exact path={"/transaction-page"}>
+        <Route exact path={"/transaction-page/:standId/:transactionId"}>
           <TransactionPage />
         </Route>
-        <Route exact path={"/invoice-page"}>
+        <Route exact path={"/invoice-page/:standId/:transactionId"}>
           <InvoicePage />
         </Route>
-        <Route exact path={"/receipt"}>
+        <Route exact path={"/receipt/:standId/:transactionId"}>
           <Receipt />
         </Route>
         <Route exact path={"/closeout/:id"}>

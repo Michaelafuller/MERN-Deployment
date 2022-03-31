@@ -8,10 +8,16 @@ const SessionDashboard = () => {
     const [currentStand, setCurrentStand] = useState({});
     const [stands, setStands] = useState([]);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [standTransactions, setStandTransactions] = useState([]);
+    const [totalReceipts, setTotalReceipts] = useState(0);
+    const [tips, setTips] = useState(0);
 
     const goToTransaction = () => {
-        axios.post('http://localhost:8000/api/transactions')
-        .then((res)=> history.push(`/transaction-page/${standId}/${res.data._id}`))
+        axios.post('http://localhost:8000/api/transactions/')
+        .then((res)=> {
+            let transaction = res.data;
+            history.push(`/transaction-page/${standId}/${transaction._id}`);
+        })
         .catch((err)=>console.log(err))
     };
 
@@ -35,6 +41,15 @@ const SessionDashboard = () => {
         .then((res)=>setCurrentStand(res.data))
         .catch((err)=>console.log(err))
 
+        axios.get(`http://localhost:8000/api/transactions/stand/${standId}`)
+        .then((res)=>setStandTransactions(res.data))
+        .catch((err)=>console.log(err))
+
+        for (const transaction of standTransactions) {
+            setTotalReceipts(totalReceipts+=transaction.price);
+            setTips(tips += transaction.tip)
+        }
+
         axios.get('http://localhost:8000/api/stands')
         .then((res) => { 
             setStands(res.data); 
@@ -53,12 +68,13 @@ const SessionDashboard = () => {
     
     return (
         <div>
+        <p>{JSON.stringify(standTransactions)}</p>
         <div style={{display:"flex", border:"2px solid black", padding:"25px", margin:"25px"}}>
             <div className="rightCol">
                 <h2 style={{textAlign:"left"}}>Today's Totals</h2>
                 <p style={{textAlign:"left"}}>Cups sold: {currentStand.total_cups}</p>
-                <p style={{textAlign:"left"}}>Total Recipts: ${currentStand.total_sales}</p>
-                <p style={{textAlign:"left"}}>Tips: ${currentStand.total_tips}</p>
+                <p style={{textAlign:"left"}}>Total Recipts: ${totalReceipts}</p>
+                <p style={{textAlign:"left"}}>Tips: ${tips}</p>
                 <p style={{textAlign:"left"}}>Costs Incurred: ${currentStand.total_costs_incurred}</p>
                 <hr />
                 <p style={{textAlign:"left"}}>Profit (not including tips): ${currentStand.total_sales - currentStand.total_tips - currentStand.total_costs_incurred}</p>
