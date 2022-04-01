@@ -27,7 +27,7 @@ function App() {
         <Route exact path={"/receipt/:standId/:transactionId"}>
           <Receipt />
         </Route>
-        <Route exact path={"/closeout/:id"}>
+        <Route exact path={"/closeout/:standId"}>
           <CloseoutPage />
         </Route>
         <Route exact path={"/add-supply"}>
