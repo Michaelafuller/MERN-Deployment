@@ -34,7 +34,7 @@ const InvoicePage = () => {
 
         const updatedTransaction = {
             ...transaction,
-            tip: tip,
+            tip: parseInt(tip),
             price: 4*transaction.lemonades
         }
 
@@ -45,19 +45,20 @@ const InvoicePage = () => {
             })
         .catch((err)=>console.log(err))
 
-        console.log(stand, 'before axios put request to update stand');
-
         const updatedStand = {
             ...stand,
-            total_sales: stand.total_sales + transaction.price,
-            total_cups: stand.total_cups + transaction.lemonades,
-            total_tips: stand.total_tips + transaction.tip
+            total_sales: stand.total_sales + updatedTransaction.price,
+            total_cups: stand.total_cups + updatedTransaction.lemonades,
+            total_tips: stand.total_tips + parseInt(tip)
         }
 
         console.log(stand, 'after put request updating stand')
 
         axios.put(`http://localhost:8000/api/stands/${standId}`, updatedStand)
-        .then((res)=>console.log(res))
+        .then((res)=>{
+            setStand(updatedStand);
+            console.log(updatedStand);
+        })
         .catch((err)=>console.log(err))
 
         history.push(`/receipt/${standId}/${transactionId}`)
@@ -65,12 +66,13 @@ const InvoicePage = () => {
 
     return (
         <div>
+            <p>{JSON.stringify(tip)}</p>
             <form className="form" style={{margin:"25px", padding:"15px", border:"solid black 2px"}} onSubmit={(e)=>toReceipt(e)}>
                 <h2>Invoice</h2>
                 <p>{transaction.lemonades} Lemonades @ $4/each</p>
                 <hr />
                 <p>Total Price: ${transaction.lemonades * 4}</p>
-                Add Gratuity: <input type="number" style={{marginBottom:"15px"}} onChange={(e)=>setTip(e.target.value)}/><br />
+                Add Gratuity: <input type="number" style={{marginBottom:"15px"}} onChange={(e)=>setTip(e.target.value)} value={tip}/><br />
                 <button className="btn btn-primary">Payment Received</button>
             </form>
         </div>

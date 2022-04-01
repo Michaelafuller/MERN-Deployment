@@ -19,7 +19,7 @@ const TransactionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Stand"
     }
-})
+}, {timestamps: true})
 
 const Transaction = mongoose.model("Transaction", TransactionSchema);
 module.exports = Transaction;

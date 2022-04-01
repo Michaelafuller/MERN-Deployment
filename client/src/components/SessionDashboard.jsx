@@ -1,16 +1,16 @@
+import React from 'react';
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom"
+import { useHistory, useParams } from "react-router-dom";
+import Moment from 'react-moment';
 
 const SessionDashboard = () => {
     const history = useHistory();
     const { standId } = useParams();
     const [currentStand, setCurrentStand] = useState({});
     const [stands, setStands] = useState([]);
-    const [isDeleted, setIsDeleted] = useState(false);
-    const [standTransactions, setStandTransactions] = useState([]);
-    const [totalReceipts, setTotalReceipts] = useState(0);
-    const [tips, setTips] = useState(0);
+    const [ingredients, setIngredients] = useState([]);
+    const [allTransactions, setAllTransactions] = useState([]);
 
     const goToTransaction = () => {
         axios.post('http://localhost:8000/api/transactions/')
@@ -41,78 +41,78 @@ const SessionDashboard = () => {
         .then((res)=>setCurrentStand(res.data))
         .catch((err)=>console.log(err))
 
-        axios.get(`http://localhost:8000/api/transactions/stand/${standId}`)
-        .then((res)=>setStandTransactions(res.data))
-        .catch((err)=>console.log(err))
-
-        for (const transaction of standTransactions) {
-            setTotalReceipts(totalReceipts+=transaction.price);
-            setTips(tips += transaction.tip)
-        }
-
         axios.get('http://localhost:8000/api/stands')
         .then((res) => { 
-            setStands(res.data); 
-            setIsDeleted(false)})
-        .catch((err)=>console.log(err))
-    }, [isDeleted, standId])
-
-    const handleDelete = (deleteStandId) => {
-        axios.delete('http://localhost:8000/api/stands/'+deleteStandId)
-        .then((res)=>{
-            setIsDeleted(true)
-            setStands(stands.filter(stand => stand._id===deleteStandId))
+            setStands(res.data);
         })
-        .catch((err)=>console.log(err))
-    }
+        .catch((err)=>console.log(err));
+
+        axios.get('http://localhost:8000/api/ingredient')
+            .then(res => {
+                setIngredients(res.data)
+            })
+            .catch(err => console.log(err))
+
+        axios.get(`http://localhost:8000/api/transactions/stand/${standId}`)
+            .then( res => {
+                console.log(res.data);
+                setAllTransactions(res.data);
+            })
+            .catch(err => console.log(err))
     
+    }, [])
+
+
+    let cupTotal = 0, sugarTotal = 0, lemonTotal = 0;
+    const lemonsOnly = ingredients.filter(obj => obj.name === 'Lemons');
+    const sugarOnly = ingredients.filter(obj => obj.name === 'Plastic Cups');
+    const cupsOnly = ingredients.filter(obj => obj.name === 'Bags of Sugar');
+    for(let i = 0; i < lemonsOnly.length; i++) {
+        lemonTotal += lemonsOnly[i].quantity;
+    };
+    for(let i = 0; i < sugarOnly.length; i++) {
+        sugarTotal += sugarOnly[i].quantity;
+    };
+    for(let i = 0; i < cupsOnly.length; i++) {
+        cupTotal += cupsOnly[i].quantity;
+    };
+
+
+
     return (
         <div>
-        <p>{JSON.stringify(standTransactions)}</p>
         <div style={{display:"flex", border:"2px solid black", padding:"25px", margin:"25px"}}>
             <div className="rightCol">
                 <h2 style={{textAlign:"left"}}>Today's Totals</h2>
                 <p style={{textAlign:"left"}}>Cups sold: {currentStand.total_cups}</p>
-                <p style={{textAlign:"left"}}>Total Recipts: ${totalReceipts}</p>
-                <p style={{textAlign:"left"}}>Tips: ${tips}</p>
+                <p style={{textAlign:"left"}}>Total Recipts: ${currentStand.total_sales}</p>
+                <p style={{textAlign:"left"}}>Tips: ${currentStand.total_tips}</p>
                 <p style={{textAlign:"left"}}>Costs Incurred: ${currentStand.total_costs_incurred}</p>
                 <hr />
                 <p style={{textAlign:"left"}}>Profit (not including tips): ${currentStand.total_sales - currentStand.total_tips - currentStand.total_costs_incurred}</p>
             </div>
             <div className="middleCol">
                 <h2 style={{textAlign:"left"}}>Supplies on Hand</h2>
-                <p style={{textAlign:"left", marginLeft:"15px"}}>Cups: 15</p>
-                <p style={{textAlign:"left", marginLeft:"15px"}}>Lemon Slices: 12</p>
-                <p style={{textAlign:"left", marginLeft:"15px"}}>Sugar Scoops: 30</p>
+                <p style={{textAlign:"left", marginLeft:"15px"}}>Cups: {cupTotal}</p>
+                <p style={{textAlign:"left", marginLeft:"15px"}}>Lemon Slices: {lemonTotal}</p>
+                <p style={{textAlign:"left", marginLeft:"15px"}}>Sugar Scoops: {sugarTotal}</p>
             </div>
             <div className="rightCol" style={{marginLeft:"50px"}}>
                 <h2>Last 5 Sales</h2>
                 <table>
                     <thead>
-                        <th>Time</th>
-                        <th>Sale Amount</th>
+                        <tr>
+                            <th>Time</th>
+                            <th>Sale Amount</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>11:32 AM</td>
-                            <td>$18</td>
-                        </tr>
-                        <tr>
-                            <td>10:06 AM</td>
-                            <td>$8</td>
-                        </tr>
-                        <tr>
-                            <td>10:06 AM</td>
-                            <td>$8</td>
-                        </tr>
-                        <tr>
-                            <td>9:45 AM</td>
-                            <td>$4</td>
-                        </tr>
-                        <tr>
-                            <td>9:30 AM</td>
-                            <td>$12</td>
-                        </tr>
+                        {allTransactions.map((transaction, idx) => 
+                            <tr key={idx}>
+                                <td><Moment format="hh:mm A">{transaction.createdAt}</Moment ></td>
+                                <td>${transaction.price}</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -120,16 +120,6 @@ const SessionDashboard = () => {
         <div style={{display:"flex", justifyContent:"space-between"}}>
             <button className="btn btn-success" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToTransaction()}><b>New Transaction</b></button>
             <button className="btn btn-danger" style={{fontSize:"30px", display:"block", margin:"25px", height:"150px", width:"400px"}} onClick={()=>goToCloseout()}><b>Close Up Shop</b></button>
-        </div>
-        <div>
-            {stands.map((stand, idx) => {
-                return (
-                    <div key={idx}>
-                        <p>{stand.is_open ? "open" : "closed"}</p>
-                        <button className="btn btn-danger" onClick={()=>handleDelete(stand._id)}>Delete</button>
-                    </div>
-                )
-            })}
         </div>
     </div>
     )
